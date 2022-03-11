@@ -4,6 +4,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -12,7 +13,8 @@ interface RetrofitService {
     @GET("users")
     suspend fun getUsers(
         @Query("since") since: Int = 0,
-        @Query("per_page") perPage: Int = 10
+        @Query("per_page") perPage: Int = 10,
+        @Header("authorization") auth: String = "Bearer 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"
     ): Response<List<CommonProfile>>
 
     @GET("users/{user_name}")

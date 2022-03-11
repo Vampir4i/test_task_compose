@@ -53,7 +53,6 @@ fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val mainVM: MainViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = AllScreens.AllUsers.name,
@@ -61,7 +60,6 @@ fun AppNavHost(
     ) {
         composable(AllScreens.AllUsers.name) {
             AllUsersScreen(
-                mainVM = mainVM,
                 selectUser = { name -> navController.navigate("${AllScreens.UserInfo.name}/$name") }
             )
         }
@@ -75,7 +73,6 @@ fun AppNavHost(
         ) {
             val userName = it.arguments?.getString("name")
             UserInfoScreen(
-                mainViewModel = mainVM,
                 userName = userName ?: ""
             )
         }

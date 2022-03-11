@@ -3,6 +3,7 @@ package com.example.testtaskcompose.retrofit
 import com.google.gson.annotations.SerializedName
 
 class CommonProfile(
+    var id: Int? = null,
     var login: String? = null,
     @SerializedName("avatar_url")
     var avatarUrl: String? = null
