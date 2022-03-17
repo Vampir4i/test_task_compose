@@ -6,7 +6,6 @@ import androidx.paging.PagingState
 import com.example.testtaskcompose.retrofit.CommonProfile
 import com.example.testtaskcompose.retrofit.RetrofitService
 
-//NOT WORKING
 class UsersSource : PagingSource<Int, CommonProfile>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CommonProfile> {
         val nextPage = params.key ?: 0
