@@ -14,7 +14,7 @@ interface RetrofitService {
     suspend fun getUsers(
         @Query("since") since: Int = 0,
         @Query("per_page") perPage: Int = 10,
-        @Header("authorization") auth: String = "Bearer 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"
+        @Header("authorization") auth: String = ""
     ): Response<List<CommonProfile>>
 
     @GET("users/{user_name}")

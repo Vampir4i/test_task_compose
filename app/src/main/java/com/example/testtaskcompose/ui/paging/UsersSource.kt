@@ -11,7 +11,7 @@ class UsersSource : PagingSource<Int, CommonProfile>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, CommonProfile> {
         val nextPage = params.key ?: 0
         val usersResponse =
-            RetrofitService.getInstance().getUsers(nextPage * 5, 5)
+            RetrofitService.getInstance().getUsers(nextPage, 10)
         return if (usersResponse.body() == null) LoadResult.Error(
             Exception(
                 usersResponse.errorBody().toString()
@@ -19,8 +19,9 @@ class UsersSource : PagingSource<Int, CommonProfile>() {
         )
         else LoadResult.Page(
             data = usersResponse.body() ?: listOf(),
-            prevKey = if (nextPage == 0) null else nextPage - 1,
-            nextKey = nextPage.plus(1)
+            prevKey = null,
+//            prevKey = if (nextPage == 0) null else nextPage - 1,
+            nextKey = usersResponse.body()?.last()?.id ?: 0
         )
     }
 
