@@ -1,21 +1,14 @@
 package com.example.testtaskcompose
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,7 +17,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.testtaskcompose.ui.screens.AllUsersScreen
 import com.example.testtaskcompose.ui.screens.UserInfoScreen
 import com.example.testtaskcompose.ui.theme.TestTaskComposeTheme
-import kotlinx.coroutines.launch
+import com.google.accompanist.web.WebView
+import com.google.accompanist.web.rememberWebViewState
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +74,21 @@ fun AppNavHost(
             val userName = it.arguments?.getString("name")
             UserInfoScreen(
                 userName = userName ?: ""
+            ) { url ->
+                val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
+                navController.navigate("${AllScreens.WebView.name}/$encodedUrl")
+            }
+        }
+        composable(
+            route = "${AllScreens.WebView.name}/{url}",
+            arguments = listOf(
+                navArgument("url") {
+                    type = NavType.StringType
+                }
             )
+        ) {
+            val url = it.arguments?.getString("url") ?: ""
+            ShowWebView(url = url)
         }
 
     }
@@ -90,6 +100,7 @@ fun TopBar(navController: NavHostController) {
     val appBarText = when (AllScreens.fromRoute(backStackEntry.value?.destination?.route)) {
         AllScreens.AllUsers -> "Users"
         AllScreens.UserInfo -> backStackEntry.value?.arguments?.get("name").toString()
+        AllScreens.WebView -> "Profile"
     }
 
     TopAppBar(
@@ -109,15 +120,23 @@ fun TopBar(navController: NavHostController) {
     )
 }
 
+@Composable
+fun ShowWebView(url: String) {
+    val webViewState = rememberWebViewState(url = url)
+    WebView(state = webViewState)
+}
+
 enum class AllScreens {
     AllUsers,
-    UserInfo;
+    UserInfo,
+    WebView;
 
     companion object {
         fun fromRoute(route: String?): AllScreens =
             when (route?.substringBefore("/")) {
                 AllUsers.name -> AllUsers
                 UserInfo.name -> UserInfo
+                WebView.name -> WebView
                 null -> AllUsers
                 else -> throw IllegalArgumentException("Route $route is not recognized.")
             }

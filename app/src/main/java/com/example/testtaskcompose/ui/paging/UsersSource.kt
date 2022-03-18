@@ -1,6 +1,5 @@
 package com.example.testtaskcompose.ui.paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.testtaskcompose.retrofit.CommonProfile

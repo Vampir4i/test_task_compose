@@ -14,6 +14,8 @@ class GitProfile(
     @SerializedName("avatar_url")
     var avatarUrl: String? = null,
     var url: String? = null,
+    @SerializedName("html_url")
+    var htmlUrl: String? = null,
     @SerializedName("public_repos")
     var publicRepos: Int? = null,
     @SerializedName("public_gists")
