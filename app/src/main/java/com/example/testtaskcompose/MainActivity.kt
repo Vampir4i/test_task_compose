@@ -3,25 +3,32 @@ package com.example.testtaskcompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.*
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import com.google.accompanist.navigation.animation.navigation
+import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.testtaskcompose.ui.screens.AllUsersScreen
 import com.example.testtaskcompose.ui.screens.UserInfoScreen
 import com.example.testtaskcompose.ui.theme.TestTaskComposeTheme
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+@ExperimentalAnimationApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +42,11 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalAnimationApi
 @Composable
 fun MyApp() {
     TestTaskComposeTheme {
-        val navController = rememberNavController()
+        val navController = rememberAnimatedNavController()
         Scaffold(
             topBar = { TopBar(navController) }
         ) { innerPadding ->
@@ -48,17 +56,35 @@ fun MyApp() {
     }
 }
 
+@ExperimentalAnimationApi
 @Composable
 fun AppNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    NavHost(
+    AnimatedNavHost(
         navController = navController,
         startDestination = AllScreens.AllUsers.name,
         modifier = modifier
     ) {
-        composable(AllScreens.AllUsers.name) {
+        composable(
+            AllScreens.AllUsers.name,
+            enterTransition = {
+                when(initialState.destination.route) {
+                    "${AllScreens.UserInfo.name}/{name}" -> {
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+                    }
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when(targetState.destination.route) {
+                    "${AllScreens.UserInfo.name}/{name}" -> {
+                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))                    }
+                    else -> null
+                }
+            }
+        ) {
             AllUsersScreen(
                 selectUser = { name -> navController.navigate("${AllScreens.UserInfo.name}/$name") }
             )
@@ -69,7 +95,22 @@ fun AppNavHost(
                 navArgument("name") {
                     type = NavType.StringType
                 }
-            )
+            ),
+            enterTransition = {
+                when(initialState.destination.route) {
+                    AllScreens.AllUsers.name -> {
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+                    }
+                    else -> null
+                }
+            },
+            exitTransition = {
+                when(targetState.destination.route) {
+                    AllScreens.AllUsers.name -> {
+                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))                    }
+                    else -> null
+                }
+            }
         ) {
             val userName = it.arguments?.getString("name")
             UserInfoScreen(
@@ -110,7 +151,7 @@ fun TopBar(navController: NavHostController) {
         },
         navigationIcon = if (navController.previousBackStackEntry != null) {
             {
-                IconButton(onClick = { navController.navigateUp() }) {
+                IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back"
