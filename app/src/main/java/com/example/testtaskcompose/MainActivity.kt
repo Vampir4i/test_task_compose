@@ -75,7 +75,8 @@ fun AppNavHost(
             UserInfoScreen(
                 userName = userName ?: ""
             ) { url ->
-                val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
+                val encodedUrl = URLEncoder.encode(url, "UTF-8")
+//                val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
                 navController.navigate("${AllScreens.WebView.name}/$encodedUrl")
             }
         }

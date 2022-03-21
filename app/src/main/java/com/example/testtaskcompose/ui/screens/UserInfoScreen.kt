@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,11 +37,11 @@ fun UserInfoScreen(
     SwipeRefresh(
         state = stateRefresh,
         onRefresh = {
-            stateRefresh.isRefreshing = false
             vm.userInfoStatus.value = UserInfoStatus.Loading
             vm.getUserInfo(userName)
         }
     ) {
+        stateRefresh.isRefreshing = false
         when (val userInfoStatus = vm.userInfoStatus.value) {
             is UserInfoStatus.Loading -> {
                 Box(
@@ -64,7 +65,11 @@ fun UserInfoScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Failed to load")
+                    Text(
+                        "Loading failed",
+                        style = MaterialTheme.typography.h6,
+                        color = Color.Red
+                    )
                     Text("Swipe to try again")
                 }
             }

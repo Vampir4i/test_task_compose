@@ -18,7 +18,7 @@ interface RetrofitService {
 
     @GET("users/{user_name}")
     suspend fun getUser(
-        @Path("user_name") userName: String
+        @Path("user_name") userName: String,
     ): Response<GitProfile>
 
     @GET("users/{user_name}/repos")

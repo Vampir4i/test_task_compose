@@ -12,7 +12,7 @@ class UsersSource : PagingSource<Int, CommonProfile>() {
             RetrofitService.getInstance().getUsers(nextPage, 10)
         return if (usersResponse.body() == null) LoadResult.Error(
             Exception(
-                usersResponse.errorBody().toString()
+                usersResponse.message()
             )
         )
         else LoadResult.Page(
@@ -24,6 +24,7 @@ class UsersSource : PagingSource<Int, CommonProfile>() {
     }
 
     override fun getRefreshKey(state: PagingState<Int, CommonProfile>): Int? {
-        return state.anchorPosition
+        return 0
+//        return state.anchorPosition
     }
 }

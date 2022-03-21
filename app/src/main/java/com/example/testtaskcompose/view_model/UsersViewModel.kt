@@ -24,7 +24,6 @@ class UsersViewModel : ViewModel() {
         if(userInfoStatus.value is UserInfoStatus.Success) return
         viewModelScope.launch {
             val response = RetrofitService.getInstance().getUser(userName)
-            delay(2000)
             userInfoStatus.value = if (response.isSuccessful) UserInfoStatus.Success(response.body())
             else UserInfoStatus.Failure(response.message())
         }
