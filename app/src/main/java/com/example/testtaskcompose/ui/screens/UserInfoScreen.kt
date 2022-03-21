@@ -2,6 +2,7 @@ package com.example.testtaskcompose.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -31,35 +32,26 @@ fun UserInfoScreen(
     openUrl: (String) -> Unit
 ) {
     val vm: UsersViewModel = viewModel()
-    vm.getUserInfo(userName)
 
-    val stateRefresh = rememberSwipeRefreshState(isRefreshing = false)
-    SwipeRefresh(
-        state = stateRefresh,
-        onRefresh = {
-            vm.userInfoStatus.value = UserInfoStatus.Loading
+    when (val userInfoStatus = vm.userInfoStatus.value) {
+        is UserInfoStatus.Loading -> {
             vm.getUserInfo(userName)
+            Box(
+                Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
-    ) {
-        stateRefresh.isRefreshing = false
-        when (val userInfoStatus = vm.userInfoStatus.value) {
-            is UserInfoStatus.Loading -> {
-                Box(
-                    Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is UserInfoStatus.Success -> {
-                val userInfo = userInfoStatus.userInfo
+        is UserInfoStatus.Success -> {
+            val userInfo = userInfoStatus.userInfo
 
-                UserInfo(
-                    userInfo ?: GitProfile(),
-                    openUrl = openUrl
-                )
-            }
-            is UserInfoStatus.Failure -> {
+            UserInfo(
+                userInfo ?: GitProfile(),
+                openUrl = openUrl
+            )
+        }
+        is UserInfoStatus.Failure -> {
                 Column(
                     Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -70,9 +62,11 @@ fun UserInfoScreen(
                         style = MaterialTheme.typography.h6,
                         color = Color.Red
                     )
-                    Text("Swipe to try again")
+                    Text(
+                        "Click to try again",
+                        modifier = Modifier.clickable { vm.userInfoStatus.value = UserInfoStatus.Loading }
+                    )
                 }
-            }
         }
     }
 
@@ -132,7 +126,6 @@ fun UserInfo(
         }
     }
 }
-
 
 
 @Preview(showBackground = true)

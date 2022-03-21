@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
@@ -21,9 +22,10 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun AllUsersScreen(selectUser: (String) -> Unit) {
     val vm: UsersViewModel = viewModel()
+    val users = remember { vm.getAllUsers() }
 
     PagingUserList(
-        users = vm.getAllUsers(),
+        users = users,
         selectUser = selectUser
     )
 }
@@ -55,37 +57,37 @@ fun PagingUserList(
             }
             lazyItems.apply {
                 when {
-//                    loadState.refresh is LoadState.Loading -> {
-//                        item {
-//                            LoadingView(modifier = Modifier.fillParentMaxSize())
-//                        }
-//                    }
-//                    loadState.refresh is LoadState.Error -> {
-//                        val e = lazyItems.loadState.refresh as LoadState.Error
-//                        val message =
-//                            if (e.error.localizedMessage?.isEmpty() == true) "Loading failed" else e.error.localizedMessage!!
-//                        item {
-//                            ErrorView(
-//                                message = message,
-//                                modifier = Modifier.fillParentMaxSize(),
-//                                onClickRetry = { retry() }
-//                            )
-//                        }
-//                    }
-//                    loadState.append is LoadState.Loading -> {
-//                        item { LoadingItem() }
-//                    }
-//                    loadState.append is LoadState.Error -> {
-//                        val e = lazyItems.loadState.append as LoadState.Error
-//                        val message =
-//                            if (e.error.localizedMessage?.isEmpty() == true) "Loading failed" else e.error.localizedMessage!!
-//                        item {
-//                            ErrorItem(
-//                                message = message,
-//                                onClickRetry = { retry() }
-//                            )
-//                        }
-//                    }
+                    loadState.refresh is LoadState.Loading -> {
+                        item {
+                            LoadingView(modifier = Modifier.fillParentMaxSize())
+                        }
+                    }
+                    loadState.refresh is LoadState.Error -> {
+                        val e = lazyItems.loadState.refresh as LoadState.Error
+                        val message =
+                            if (e.error.localizedMessage?.isEmpty() == true) "Loading failed" else e.error.localizedMessage!!
+                        item {
+                            ErrorView(
+                                message = message,
+                                modifier = Modifier.fillParentMaxSize(),
+                                onClickRetry = { retry() }
+                            )
+                        }
+                    }
+                    loadState.append is LoadState.Loading -> {
+                        item { LoadingItem() }
+                    }
+                    loadState.append is LoadState.Error -> {
+                        val e = lazyItems.loadState.append as LoadState.Error
+                        val message =
+                            if (e.error.localizedMessage?.isEmpty() == true) "Loading failed" else e.error.localizedMessage!!
+                        item {
+                            ErrorItem(
+                                message = message,
+                                onClickRetry = { retry() }
+                            )
+                        }
+                    }
                 }
             }
         }

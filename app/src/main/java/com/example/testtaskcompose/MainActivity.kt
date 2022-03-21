@@ -72,7 +72,7 @@ fun AppNavHost(
             enterTransition = {
                 when(initialState.destination.route) {
                     "${AllScreens.UserInfo.name}/{name}" -> {
-                        slideIntoContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))
+                        slideIntoContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(700))
                     }
                     else -> null
                 }
@@ -107,7 +107,7 @@ fun AppNavHost(
             exitTransition = {
                 when(targetState.destination.route) {
                     AllScreens.AllUsers.name -> {
-                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, animationSpec = tween(700))                    }
+                        slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(700))                    }
                     else -> null
                 }
             }
@@ -117,7 +117,6 @@ fun AppNavHost(
                 userName = userName ?: ""
             ) { url ->
                 val encodedUrl = URLEncoder.encode(url, "UTF-8")
-//                val encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString())
                 navController.navigate("${AllScreens.WebView.name}/$encodedUrl")
             }
         }
